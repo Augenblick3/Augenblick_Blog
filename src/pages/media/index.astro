@@ -1,0 +1,139 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allMedia = (await getCollection('media', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.dateConsumed.getTime() - a.data.dateConsumed.getTime());
+
+const currentYear = new Date().getFullYear();
+
+// Group by type
+const films = allMedia.filter((m) => m.data.type === 'film' || m.data.type === 'tv');
+const music = allMedia.filter((m) => m.data.type === 'music' || m.data.type === 'album');
+const books = allMedia.filter((m) => m.data.type === 'book');
+
+// Group by month for timeline
+function groupByMonth(items: typeof allMedia) {
+  const groups: Record<string, typeof allMedia> = {};
+  for (const item of items) {
+    const key = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long' })
+      .format(item.data.dateConsumed);
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(item);
+  }
+  return groups;
+}
+
+const byMonth = groupByMonth(allMedia);
+
+const typeLabel: Record<string, string> = {
+  film: '电影',
+  tv: '剧集',
+  music: '音乐',
+  album: '专辑',
+  book: '书',
+};
+
+const typeColor: Record<string, string> = {
+  film: 'bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400',
+  tv: 'bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400',
+  music: 'bg-violet-50 dark:bg-violet-950/30 text-violet-600 dark:text-violet-400',
+  album: 'bg-violet-50 dark:bg-violet-950/30 text-violet-600 dark:text-violet-400',
+  book: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400',
+};
+
+function renderStars(rating?: number) {
+  if (!rating) return '';
+  return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+}
+---
+
+<BaseLayout title="媒介">
+  <div class="max-w-3xl mx-auto px-6 py-12">
+    <!-- Header -->
+    <header class="mb-12">
+      <p class="text-xs tracking-[0.3em] uppercase text-gray-400 dark:text-gray-500 mb-3">
+        {currentYear}
+      </p>
+      <h1 class="font-serif text-4xl font-medium text-gray-900 dark:text-gray-100">
+        媒介
+      </h1>
+      <p class="mt-3 text-gray-500 dark:text-gray-400">
+        影视 · 音乐 · 文学 &mdash; 今年的记录
+      </p>
+
+      <!-- Stats -->
+      <div class="flex gap-6 mt-6 text-sm text-gray-400 dark:text-gray-500">
+        <span><strong class="text-gray-700 dark:text-gray-300">{films.length}</strong> 部影视</span>
+        <span><strong class="text-gray-700 dark:text-gray-300">{music.length}</strong> 张/首音乐</span>
+        <span><strong class="text-gray-700 dark:text-gray-300">{books.length}</strong> 本书</span>
+      </div>
+    </header>
+
+    <!-- Timeline -->
+    {Object.keys(byMonth).length === 0 ? (
+      <div class="text-center py-20 text-gray-400 dark:text-gray-600">
+        <p class="font-serif italic text-lg">尚无记录</p>
+        <p class="text-sm mt-2">前往 /admin 开始添加</p>
+      </div>
+    ) : (
+      <div class="relative">
+        <!-- Vertical line -->
+        <div class="absolute left-0 top-0 bottom-0 w-px bg-gray-200 dark:bg-[#262626] ml-1.5"></div>
+
+        <div class="space-y-10 pl-10">
+          {Object.entries(byMonth).map(([month, items]) => (
+            <div>
+              <!-- Month label -->
+              <div class="relative mb-6">
+                <div class="absolute -left-10 top-1 w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600 border-2 border-[#fafafa] dark:border-[#0f0f0f]"></div>
+                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 tracking-wide">
+                  {month}
+                </h2>
+              </div>
+
+              <!-- Items in this month -->
+              <div class="space-y-3">
+                {items.map((item) => (
+                  <a href={`/media/${item.slug}`}
+                     class="group flex items-start gap-4 p-4 rounded-lg
+                            border border-transparent hover:border-gray-200 dark:hover:border-[#262626]
+                            hover:bg-white dark:hover:bg-[#141414]
+                            transition-all duration-200">
+                    {item.data.cover ? (
+                      <img src={item.data.cover} alt={item.data.title}
+                           class="w-12 h-12 object-cover rounded-md flex-shrink-0" />
+                    ) : (
+                      <div class="w-12 h-12 rounded-md flex-shrink-0 bg-gray-100 dark:bg-[#1f1f1f]
+                                  flex items-center justify-center text-gray-300 dark:text-gray-600 text-lg">
+                        {item.data.type === 'book' ? '📖' : item.data.type === 'film' || item.data.type === 'tv' ? '🎬' : '🎵'}
+                      </div>
+                    )}
+
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-1">
+                        <span class={`text-xs px-1.5 py-0.5 rounded font-medium ${typeColor[item.data.type]}`}>
+                          {typeLabel[item.data.type]}
+                        </span>
+                        {item.data.rating && (
+                          <span class="text-xs text-amber-400">{renderStars(item.data.rating)}</span>
+                        )}
+                      </div>
+                      <p class="font-medium text-gray-900 dark:text-gray-100 truncate
+                                group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        {item.data.title}
+                      </p>
+                      {item.data.creator && (
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{item.data.creator}</p>
+                      )}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</BaseLayout>

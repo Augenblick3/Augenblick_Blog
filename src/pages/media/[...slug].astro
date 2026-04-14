@@ -1,0 +1,93 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('media', ({ data }) => !data.draft);
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+const { title, type, creator, yearCreated, dateConsumed, rating, cover, tags } = entry.data;
+
+const typeLabel: Record<string, string> = {
+  film: '电影', tv: '剧集', music: '音乐', album: '专辑', book: '书',
+};
+
+const formattedDate = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric', month: 'long', day: 'numeric',
+}).format(dateConsumed);
+
+function renderStars(r?: number) {
+  if (!r) return null;
+  return { filled: r, empty: 5 - r };
+}
+const stars = renderStars(rating);
+---
+
+<BaseLayout title={title}>
+  <article class="max-w-2xl mx-auto px-6 py-12">
+    <!-- Cover + meta header -->
+    <header class="mb-10">
+      {cover && (
+        <div class="mb-8 -mx-6 sm:mx-0">
+          <img src={cover} alt={title}
+               class="w-full sm:w-48 sm:float-right sm:ml-8 sm:rounded-xl
+                      sm:shadow-lg object-cover aspect-[2/3] sm:aspect-auto sm:h-72" />
+        </div>
+      )}
+
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-xs px-2 py-0.5 rounded bg-gray-100 dark:bg-[#1f1f1f]
+                     text-gray-600 dark:text-gray-400 font-medium">
+          {typeLabel[type]}
+        </span>
+        {tags?.map((tag) => <span class="tag-pill">{tag}</span>)}
+      </div>
+
+      <h1 class="font-serif text-3xl font-medium text-gray-900 dark:text-gray-100 leading-snug mb-2">
+        {title}
+      </h1>
+
+      {creator && (
+        <p class="text-gray-500 dark:text-gray-400 mb-1">
+          {creator}{yearCreated ? ` · ${yearCreated}` : ''}
+        </p>
+      )}
+
+      <div class="flex items-center gap-4 mt-3">
+        {stars && (
+          <span class="text-base" aria-label={`${rating} 星`}>
+            {'★'.repeat(stars.filled)}<span class="text-gray-300 dark:text-gray-600">{'★'.repeat(stars.empty)}</span>
+          </span>
+        )}
+        <time class="text-sm text-gray-400 dark:text-gray-500" datetime={dateConsumed.toISOString()}>
+          {formattedDate}
+        </time>
+      </div>
+
+      <div class="mt-6 border-t border-gray-100 dark:border-[#1f1f1f]" style="clear:both"></div>
+    </header>
+
+    <!-- Post content (reviews, notes, lyrics, screenshots) -->
+    <div class="prose prose-gray dark:prose-invert max-w-none
+                prose-headings:font-serif prose-headings:font-medium
+                prose-a:text-indigo-600 dark:prose-a:text-indigo-400
+                prose-blockquote:not-italic prose-blockquote:font-serif
+                prose-code:text-sm">
+      <Content />
+    </div>
+
+    <footer class="mt-16 pt-8 section-divider">
+      <a href="/media"
+         class="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+        ← 返回媒介
+      </a>
+    </footer>
+  </article>
+</BaseLayout>

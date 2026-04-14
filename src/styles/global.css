@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500&family=Noto+Serif+SC:wght@400;500&display=swap');
+@import 'katex/dist/katex.min.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-[#fafafa] text-[#1a1a1a] transition-colors duration-200;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  .dark body {
+    @apply bg-[#0f0f0f] text-[#e8e8e8];
+  }
+
+  ::selection {
+    @apply bg-indigo-200 dark:bg-indigo-800;
+  }
+}
+
+@layer components {
+  .nav-link {
+    @apply text-sm tracking-wide text-gray-500 dark:text-gray-400
+           hover:text-gray-900 dark:hover:text-gray-100
+           transition-colors duration-150;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-black/40;
+  }
+
+  .section-divider {
+    @apply border-t border-gray-200 dark:border-[#262626];
+  }
+
+  .tag-pill {
+    @apply inline-block px-2 py-0.5 text-xs rounded-full
+           bg-gray-100 dark:bg-[#1f1f1f]
+           text-gray-500 dark:text-gray-400;
+  }
+}
+
+/* KaTeX display math */
+.katex-display {
+  @apply overflow-x-auto py-2;
+}
+
+/* Code blocks */
+.astro-code {
+  @apply rounded-lg p-4 text-sm overflow-x-auto;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Prose customizations */
+.prose h1, .prose h2, .prose h3 {
+  font-family: 'Lora', 'Noto Serif SC', serif;
+  font-weight: 500;
+}
+
+.prose a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* Thin scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+}
+
+/* Page transitions */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: fadeIn 0.3s ease-out;
+}

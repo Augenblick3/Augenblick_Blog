@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = (await getCollection('musings', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title="随想">
+  <div class="max-w-2xl mx-auto px-6 py-12">
+    <header class="mb-12">
+      <p class="text-xs tracking-[0.3em] uppercase text-gray-400 dark:text-gray-500 mb-3">Musings</p>
+      <h1 class="font-serif text-4xl font-medium text-gray-900 dark:text-gray-100">随想</h1>
+      <p class="mt-3 text-gray-500 dark:text-gray-400">
+        一些零散的想法，与不成系统的文字
+      </p>
+    </header>
+
+    {allPosts.length === 0 ? (
+      <div class="text-center py-20 text-gray-400 dark:text-gray-600">
+        <p class="font-serif italic text-lg">尚无随想</p>
+        <p class="text-sm mt-2">前往 /admin 开始写作</p>
+      </div>
+    ) : (
+      <ul class="space-y-0">
+        {allPosts.map((post) => {
+          const year = post.data.date.getFullYear();
+          const monthDay = new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric' })
+            .format(post.data.date);
+          return (
+            <li>
+              <a href={`/musings/${post.slug}`}
+                 class="group flex items-baseline gap-6 py-5
+                        border-b border-gray-100 dark:border-[#1a1a1a]
+                        hover:opacity-70 transition-opacity">
+                <time class="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0 w-24 tabular-nums">
+                  {monthDay}
+                </time>
+                <span class="font-serif text-lg text-gray-900 dark:text-gray-100
+                             group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  {post.data.title}
+                </span>
+                {post.data.tags && post.data.tags.length > 0 && (
+                  <span class="tag-pill ml-auto flex-shrink-0">{post.data.tags[0]}</span>
+                )}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </div>
+</BaseLayout>

@@ -1,0 +1,31 @@
+---
+title: "Week 15: Convergence Analysis Progress"
+type: weekly
+date: 2026-04-07
+tags: ["optimization", "convergence"]
+draft: false
+---
+
+This week made decent progress on the convergence rate proof for the adaptive gradient method.
+
+## What I did
+
+- Filled in the gap in Lemma 3.2 — the key was bounding the variance term using the smoothness constant $L$ more carefully.
+- Read [Defazio et al. 2023] on schedule-free optimizers; their variance reduction trick might be applicable.
+- Met with advisor Thursday, got feedback to tighten the assumptions in Section 4.
+
+## The key inequality
+
+The main bound now looks like:
+
+$$
+\mathbb{E}\left[\|\nabla f(x_t)\|^2\right] \leq \frac{2(f(x_0) - f^*)}{T} + \frac{\sigma^2 L}{T}
+$$
+
+where $\sigma^2$ is the gradient noise variance. Still need to handle the non-convex case.
+
+## Next week
+
+- Write up the proof cleanly
+- Start experiments on synthetic quadratic problems
+- Read [Khaled & Richtárik 2020] for comparison baselines
