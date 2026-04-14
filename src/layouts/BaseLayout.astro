@@ -6,10 +6,17 @@ interface Props {
 
 const { title, description = "Augenblick — 瞬息之记" } = Astro.props;
 const pageTitle = title ? `${title} — Augenblick` : 'Augenblick';
+
+const navLinks = [
+  { href: '/media',    label: '媒介' },
+  { href: '/research', label: '科研' },
+  { href: '/musings',  label: '隨想' },
+  { href: '/fitness',  label: '健身' },
+];
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,21 +24,13 @@ const pageTitle = title ? `${title} — Augenblick` : 'Augenblick';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{pageTitle}</title>
 
-    <!-- Send Netlify Identity email links to the Decap admin UI before the page renders -->
+    <!-- Redirect Netlify Identity tokens to /admin before render -->
     <script is:inline>
       (function () {
-        const authTokenKeys = [
-          'invite_token=',
-          'recovery_token=',
-          'confirmation_token=',
-          'email_change_token=',
-        ];
+        const keys = ['invite_token=', 'recovery_token=', 'confirmation_token=', 'email_change_token='];
         const { pathname, search, hash } = window.location;
-        const hasAuthToken = authTokenKeys.some((token) => hash.includes(token));
-        const isAdminRoute = pathname === '/admin' || pathname === '/admin/';
-
-        if (hasAuthToken && !isAdminRoute) {
-          window.location.replace(`/admin/${search}${hash}`);
+        if (keys.some(k => hash.includes(k)) && pathname !== '/admin' && pathname !== '/admin/') {
+          window.location.replace('/admin/' + search + hash);
         }
       })();
     </script>
@@ -39,83 +38,152 @@ const pageTitle = title ? `${title} — Augenblick` : 'Augenblick';
     <!-- Netlify Identity Widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-    <!-- Inline dark mode script to prevent flash -->
+    <!-- Prevent dark mode flash -->
     <script is:inline>
       (function () {
-        const stored = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (stored === 'dark' || (!stored && prefersDark)) {
-          document.documentElement.classList.add('dark');
-        }
+        const s = localStorage.getItem('theme');
+        const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
       })();
     </script>
   </head>
 
   <body class="min-h-screen antialiased">
-    <!-- Navigation -->
+
+    <!-- ── Navigation ─────────────────────────────────────── -->
     <nav class="fixed top-0 left-0 right-0 z-50 px-6 py-4
-                bg-[#fafafa]/80 dark:bg-[#0f0f0f]/80 backdrop-blur-sm
-                border-b border-gray-200/60 dark:border-[#262626]/60">
+                bg-[#f5f2ee]/85 dark:bg-[#1a1816]/85 backdrop-blur-sm
+                border-b border-[#dbd8d3]/70 dark:border-[#2c2925]/70">
       <div class="max-w-5xl mx-auto flex items-center justify-between">
+
+        <!-- Logo -->
         <a href="/" class="font-serif text-lg font-medium tracking-tight
-                           text-gray-900 dark:text-gray-100 hover:opacity-70 transition-opacity">
+                           text-[#302d29] dark:text-[#c8c2b8] hover:opacity-60 transition-opacity">
           Augenblick
         </a>
 
-        <div class="flex items-center gap-6">
-          <a href="/media" class="nav-link">媒介</a>
-          <a href="/research" class="nav-link">科研</a>
-          <a href="/musings" class="nav-link">随想</a>
-          <a href="/fitness" class="nav-link">健身</a>
-
-          <!-- Dark mode toggle -->
-          <button id="theme-toggle"
-                  aria-label="Toggle dark mode"
-                  class="p-1.5 rounded-md text-gray-500 dark:text-gray-400
-                         hover:text-gray-900 dark:hover:text-gray-100
-                         hover:bg-gray-100 dark:hover:bg-[#1f1f1f]
+        <!-- Desktop links + dark toggle -->
+        <div class="hidden md:flex items-center gap-6">
+          {navLinks.map(({ href, label }) => (
+            <a href={href} class="nav-link">{label}</a>
+          ))}
+          <button id="theme-toggle-desktop" aria-label="切換深淺色"
+                  class="p-1.5 rounded-md text-[#9a9189] dark:text-[#6a6560]
+                         hover:text-[#302d29] dark:hover:text-[#c8c2b8]
+                         hover:bg-[#edeae4] dark:hover:bg-[#2c2925]
                          transition-all duration-150">
-            <svg id="icon-sun" class="w-4 h-4 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <svg class="w-4 h-4 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
             </svg>
-            <svg id="icon-moon" class="w-4 h-4 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <svg class="w-4 h-4 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
             </svg>
           </button>
         </div>
+
+        <!-- Mobile: dark toggle + hamburger -->
+        <div class="flex md:hidden items-center gap-3">
+          <button id="theme-toggle-mobile" aria-label="切換深淺色"
+                  class="p-1.5 rounded-md text-[#9a9189] dark:text-[#6a6560]
+                         hover:text-[#302d29] dark:hover:text-[#c8c2b8] transition-colors">
+            <svg class="w-4 h-4 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+            </svg>
+            <svg class="w-4 h-4 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+            </svg>
+          </button>
+
+          <button id="hamburger" aria-label="開啟選單" aria-expanded="false"
+                  class="p-1.5 rounded-md text-[#9a9189] dark:text-[#6a6560]
+                         hover:text-[#302d29] dark:hover:text-[#c8c2b8] transition-colors">
+            <!-- Hamburger icon -->
+            <svg id="icon-menu" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+            <!-- Close icon -->
+            <svg id="icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Mobile dropdown menu -->
+      <div id="mobile-menu"
+           class="hidden md:hidden max-w-5xl mx-auto pt-3 pb-1 border-t border-[#dbd8d3]/50 dark:border-[#2c2925]/50 mt-3">
+        {navLinks.map(({ href, label }) => (
+          <a href={href}
+             class="block py-2.5 text-sm text-[#6a6560] dark:text-[#6a6560]
+                    hover:text-[#302d29] dark:hover:text-[#c8c2b8] transition-colors">
+            {label}
+          </a>
+        ))}
       </div>
     </nav>
 
-    <!-- Main content -->
+    <!-- ── Main content ────────────────────────────────────── -->
     <main class="pt-16 page-enter">
       <slot />
     </main>
 
-    <!-- Footer -->
-    <footer class="mt-20 px-6 py-10 section-divider text-center">
-      <p class="text-sm text-gray-400 dark:text-gray-600">
-        Augenblick &mdash; <span class="font-serif italic">瞬息皆永恒</span>
+    <!-- ── Footer ─────────────────────────────────────────── -->
+    <footer class="mt-16 px-6 py-14 border-t border-[#dbd8d3]/60 dark:border-[#2c2925]/60 text-center">
+      <p class="font-serif italic text-[#b0aa9f] dark:text-[#4a4640] text-base leading-loose tracking-wide">
+        「留住 溫度 速度 溫柔和憤怒 凝住 今日 怎樣 好
+      </p>
+      <p class="font-serif italic text-[#b0aa9f] dark:text-[#4a4640] text-base leading-loose tracking-wide">
+        捉緊 生命濃度 坦白流露 感情和態度 停下時光 靜止衰老
+      </p>
+      <p class="mt-4 text-xs text-[#c8c4be] dark:text-[#363330] tracking-widest">
+        — 陳奕迅
       </p>
     </footer>
 
     <script>
-      // After Netlify Identity login, redirect to /admin
+      // Netlify Identity redirect
       if (window.netlifyIdentity) {
         window.netlifyIdentity.on('init', (user: unknown) => {
           if (!user) {
-            window.netlifyIdentity.on('login', () => {
-              document.location.href = '/admin/';
-            });
+            window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; });
           }
         });
       }
 
-      const toggle = document.getElementById('theme-toggle');
-      toggle?.addEventListener('click', () => {
+      // Dark mode toggle (both desktop and mobile buttons)
+      function toggleTheme() {
         const isDark = document.documentElement.classList.toggle('dark');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      }
+      document.getElementById('theme-toggle-desktop')?.addEventListener('click', toggleTheme);
+      document.getElementById('theme-toggle-mobile')?.addEventListener('click', toggleTheme);
+
+      // Hamburger menu
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const iconMenu  = document.getElementById('icon-menu');
+      const iconClose = document.getElementById('icon-close');
+
+      hamburger?.addEventListener('click', () => {
+        const isOpen = mobileMenu?.classList.toggle('hidden') === false;
+        hamburger.setAttribute('aria-expanded', String(isOpen));
+        iconMenu?.classList.toggle('hidden', isOpen);
+        iconClose?.classList.toggle('hidden', !isOpen);
+      });
+
+      // Close mobile menu on link click
+      mobileMenu?.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+          hamburger?.setAttribute('aria-expanded', 'false');
+          iconMenu?.classList.remove('hidden');
+          iconClose?.classList.add('hidden');
+        });
       });
     </script>
   </body>

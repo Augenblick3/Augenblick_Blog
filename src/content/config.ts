@@ -46,8 +46,8 @@ const fitnessCollection = defineCollection({
   type: 'content',
   schema: z.object({
     date: z.coerce.date(),
-    // Activities is a free-form list; details go in the Markdown body
-    summary: z.string().optional(),    // e.g. "跑步 5km · 深蹲 3×10"
+    isRestDay: z.boolean().default(false),
+    summary: z.string().optional(),
     totalMinutes: z.number().optional(),
     mood: z.enum(['great', 'good', 'okay', 'tired']).optional(),
     draft: z.boolean().default(false),

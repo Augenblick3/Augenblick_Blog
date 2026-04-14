@@ -18,12 +18,12 @@
   }
 
   body {
-    @apply bg-[#fafafa] text-[#1a1a1a] transition-colors duration-200;
+    @apply bg-[#f5f2ee] text-[#302d29] transition-colors duration-200;
     font-feature-settings: "kern" 1, "liga" 1;
   }
 
   .dark body {
-    @apply bg-[#0f0f0f] text-[#e8e8e8];
+    @apply bg-[#1a1816] text-[#c8c2b8];
   }
 
   ::selection {

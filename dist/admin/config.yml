@@ -103,7 +103,6 @@ collections:
     format: "frontmatter"
     fields:
       - { label: "日期", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false }
-      - { label: "休息日（开启后不计入训练天数）", name: "isRestDay", widget: "boolean", default: false }
       - { label: "一句话概括（如：跑步 5km · 深蹲 3×10）", name: "summary", widget: "string", required: false }
       - { label: "总时长（分钟）", name: "totalMinutes", widget: "number", required: false }
       - label: "当日状态"

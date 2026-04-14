@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Augenblick — 瞬息之记"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>罪与罚 — Augenblick</title><!-- Send Netlify Identity email links to the Decap admin UI before the page renders --><script>
+      (function () {
+        const authTokenKeys = [
+          'invite_token=',
+          'recovery_token=',
+          'confirmation_token=',
+          'email_change_token=',
+        ];
+        const { pathname, search, hash } = window.location;
+        const hasAuthToken = authTokenKeys.some((token) => hash.includes(token));
+        const isAdminRoute = pathname === '/admin' || pathname === '/admin/';
+
+        if (hasAuthToken && !isAdminRoute) {
+          window.location.replace(`/admin/${search}${hash}`);
+        }
+      })();
+    </script><!-- Netlify Identity Widget --><!-- Inline dark mode script to prevent flash --><script>
+      (function () {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored === 'dark' || (!stored && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_slug_.DehKeCA9.css"><script type="module" src="/_astro/hoisted.By1wLBHJ.js"></script></head> <body class="min-h-screen antialiased"> <!-- Navigation --> <nav class="fixed top-0 left-0 right-0 z-50 px-6 py-4
+                bg-[#fafafa]/80 dark:bg-[#0f0f0f]/80 backdrop-blur-sm
+                border-b border-gray-200/60 dark:border-[#262626]/60"> <div class="max-w-5xl mx-auto flex items-center justify-between"> <a href="/" class="font-serif text-lg font-medium tracking-tight
+                           text-gray-900 dark:text-gray-100 hover:opacity-70 transition-opacity">
+Augenblick
+</a> <div class="flex items-center gap-6"> <a href="/media" class="nav-link">媒介</a> <a href="/research" class="nav-link">科研</a> <a href="/musings" class="nav-link">随想</a> <a href="/fitness" class="nav-link">健身</a> <!-- Dark mode toggle --> <button id="theme-toggle" aria-label="Toggle dark mode" class="p-1.5 rounded-md text-gray-500 dark:text-gray-400
+                         hover:text-gray-900 dark:hover:text-gray-100
+                         hover:bg-gray-100 dark:hover:bg-[#1f1f1f]
+                         transition-all duration-150"> <svg id="icon-sun" class="w-4 h-4 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"></path> </svg> <svg id="icon-moon" class="w-4 h-4 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"> <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"></path> </svg> </button> </div> </div> </nav> <!-- Main content --> <main class="pt-16 page-enter">  <article class="max-w-2xl mx-auto px-6 py-12"> <!-- Cover + meta header --> <header class="mb-10">  <div class="flex items-center gap-2 mb-3"> <span class="text-xs px-2 py-0.5 rounded bg-gray-100 dark:bg-[#1f1f1f]
+                     text-gray-600 dark:text-gray-400 font-medium"> 书 </span> <span class="tag-pill">俄国文学</span><span class="tag-pill">心理</span><span class="tag-pill">经典</span> </div> <h1 class="font-serif text-3xl font-medium text-gray-900 dark:text-gray-100 leading-snug mb-2"> 罪与罚 </h1> <p class="text-gray-500 dark:text-gray-400 mb-1"> 陀思妥耶夫斯基 · 1866 </p> <div class="flex items-center gap-4 mt-3"> <span class="text-base" aria-label="5 星"> ★★★★★<span class="text-gray-300 dark:text-gray-600"></span> </span> <time class="text-sm text-gray-400 dark:text-gray-500" datetime="2026-03-28T00:00:00.000Z"> 2026年3月28日 </time> </div> <div class="mt-6 border-t border-gray-100 dark:border-[#1f1f1f]" style="clear:both"></div> </header> <!-- Post content (reviews, notes, lyrics, screenshots) --> <div class="prose prose-gray dark:prose-invert max-w-none
+                prose-headings:font-serif prose-headings:font-medium
+                prose-a:text-indigo-600 dark:prose-a:text-indigo-400
+                prose-blockquote:not-italic prose-blockquote:font-serif
+                prose-code:text-sm"> <h2 id="第一部--2026-01-20">第一部 · 2026-01-20</h2>
+<p>从第一页就感到一种令人窒息的压迫感。彼得堡的夏天，那个小房间，拉斯科尔尼科夫的发烧式思维——陀思妥耶夫斯基把一个人的内心世界写得像是物理空间一样可以感知。</p>
+<p>所谓”超人理论”——有权利跨越道德界限的非凡之人——在今天读来依然令人不安地熟悉。</p>
+<h2 id="第三部--2026-02-08">第三部 · 2026-02-08</h2>
+<p>波尔菲里那几场审讯戏是全书最精彩的部分。两个聪明人之间的心理博弈，语言像刀一样精准。拉斯科尔尼科夫越来越难以控制自己的崩溃。</p>
+<h2 id="第六部-读完--2026-03-28">第六部 读完 · 2026-03-28</h2>
+<p>最后的自首并不是理论的失败，而是人性的胜利——或者说，人性不允许理论把它消灭掉。索尼娅那个形象一直是全书的道德锚点，尽管她本身也活在深渊之中。</p>
+<p>合上书的时候感觉像是从一段很长的梦里醒来。</p> </div> <footer class="mt-16 pt-8 section-divider"> <a href="/media" class="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+← 返回媒介
+</a> </footer> </article>  </main> <!-- Footer --> <footer class="mt-20 px-6 py-10 section-divider text-center"> <p class="text-sm text-gray-400 dark:text-gray-600">
+Augenblick &mdash; <span class="font-serif italic">瞬息皆永恒</span> </p> </footer>  </body> </html>
