@@ -17,7 +17,26 @@ const pageTitle = title ? `${title} — Augenblick` : 'Augenblick';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{pageTitle}</title>
 
-    <!-- Netlify Identity Widget — handles invite/recovery tokens in URL hash -->
+    <!-- Send Netlify Identity email links to the Decap admin UI before the page renders -->
+    <script is:inline>
+      (function () {
+        const authTokenKeys = [
+          'invite_token=',
+          'recovery_token=',
+          'confirmation_token=',
+          'email_change_token=',
+        ];
+        const { pathname, search, hash } = window.location;
+        const hasAuthToken = authTokenKeys.some((token) => hash.includes(token));
+        const isAdminRoute = pathname === '/admin' || pathname === '/admin/';
+
+        if (hasAuthToken && !isAdminRoute) {
+          window.location.replace(`/admin/${search}${hash}`);
+        }
+      })();
+    </script>
+
+    <!-- Netlify Identity Widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
     <!-- Inline dark mode script to prevent flash -->
