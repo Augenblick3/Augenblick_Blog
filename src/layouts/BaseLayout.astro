@@ -17,6 +17,9 @@ const pageTitle = title ? `${title} — Augenblick` : 'Augenblick';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{pageTitle}</title>
 
+    <!-- Netlify Identity Widget — handles invite/recovery tokens in URL hash -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
     <!-- Inline dark mode script to prevent flash -->
     <script is:inline>
       (function () {
@@ -79,6 +82,17 @@ const pageTitle = title ? `${title} — Augenblick` : 'Augenblick';
     </footer>
 
     <script>
+      // After Netlify Identity login, redirect to /admin
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on('init', (user: unknown) => {
+          if (!user) {
+            window.netlifyIdentity.on('login', () => {
+              document.location.href = '/admin/';
+            });
+          }
+        });
+      }
+
       const toggle = document.getElementById('theme-toggle');
       toggle?.addEventListener('click', () => {
         const isDark = document.documentElement.classList.toggle('dark');
