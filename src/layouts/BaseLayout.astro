@@ -35,8 +35,8 @@ const navLinks = [
       })();
     </script>
 
-    <!-- Netlify Identity Widget -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <!-- Keep this as a classic script so Astro doesn't rewrite it into a module import -->
+    <script is:inline src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
     <!-- Prevent dark mode flash -->
     <script is:inline>
@@ -145,10 +145,10 @@ const navLinks = [
       </p>
     </footer>
 
-    <script>
+    <script is:inline>
       // Netlify Identity redirect
       if (window.netlifyIdentity) {
-        window.netlifyIdentity.on('init', (user: unknown) => {
+        window.netlifyIdentity.on('init', (user) => {
           if (!user) {
             window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; });
           }
@@ -170,8 +170,9 @@ const navLinks = [
       const iconClose = document.getElementById('icon-close');
 
       hamburger?.addEventListener('click', () => {
-        const isOpen = mobileMenu?.classList.toggle('hidden') === false;
-        hamburger.setAttribute('aria-expanded', String(isOpen));
+        mobileMenu?.classList.toggle('hidden');
+        const isOpen = !mobileMenu?.classList.contains('hidden');
+        hamburger?.setAttribute('aria-expanded', String(isOpen));
         iconMenu?.classList.toggle('hidden', isOpen);
         iconClose?.classList.toggle('hidden', !isOpen);
       });
