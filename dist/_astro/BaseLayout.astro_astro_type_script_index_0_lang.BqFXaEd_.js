@@ -1,1 +1,0 @@
-window.netlifyIdentity&&window.netlifyIdentity.on("init",t=>{t||window.netlifyIdentity.on("login",()=>{document.location.href="/admin/"})});const e=document.getElementById("theme-toggle");e?.addEventListener("click",()=>{const t=document.documentElement.classList.toggle("dark");localStorage.setItem("theme",t?"dark":"light")});
