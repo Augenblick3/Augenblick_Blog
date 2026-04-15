@@ -10,6 +10,7 @@ const mediaCollection = defineCollection({
     creator: z.string().optional(),
     yearCreated: z.number().optional(),
     dateConsumed: z.coerce.date(),
+    dateConsumedEnd: z.coerce.date().optional(),
     rating: z.number().min(1).max(5).optional(),
     cover: z.string().optional(),
     tags: z.array(z.string()).optional(),
@@ -19,7 +20,7 @@ const mediaCollection = defineCollection({
     screenwriter: z.string().optional(),           // 编剧
     leadActor: z.string().optional(),              // 男主
     leadActress: z.string().optional(),            // 女主
-    cast: z.array(z.string()).optional(),           // 主演，格式: ["演员 (角色)", ...]
+    cast: z.array(z.string()).optional(),          // 主演，格式: ["演员 (角色)", ...]
 
     // Book extras
     translator: z.string().optional(),             // 译者
@@ -28,7 +29,13 @@ const mediaCollection = defineCollection({
     lyricist: z.string().optional(),               // 作词
     composer: z.string().optional(),               // 作曲
     arranger: z.string().optional(),               // 编曲
-  }),
+  }).refine(
+    (data) => !data.dateConsumedEnd || data.dateConsumedEnd >= data.dateConsumed,
+    {
+      message: '结束日期不能早于开始日期',
+      path: ['dateConsumedEnd'],
+    },
+  ),
 });
 
 // Research posts: project updates, paper notes, tech posts, weekly reports

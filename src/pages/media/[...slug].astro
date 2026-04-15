@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatMediaDateLabel, getMediaEndDate, getMediaStartDate } from '../../utils/mediaDates';
 
 export async function getStaticPaths() {
   const entries = await getCollection('media', ({ data }) => !data.draft);
@@ -14,7 +15,7 @@ const { entry } = Astro.props;
 const { Content } = await entry.render();
 
 const {
-  title, type, creator, yearCreated, dateConsumed, rating, cover, tags,
+  title, type, creator, yearCreated, dateConsumed, dateConsumedEnd, rating, cover, tags,
   // Film/TV
   screenwriter, leadActor, leadActress, cast,
   // Book
@@ -32,9 +33,13 @@ const creatorRole: Record<string, string> = {
   film: '导演', tv: '导演', music: '演唱', album: '演唱', book: '作者',
 };
 
-const formattedDate = new Intl.DateTimeFormat('zh-CN', {
-  year: 'numeric', month: 'long', day: 'numeric',
-}).format(dateConsumed);
+const mediaDate = { dateConsumed, dateConsumedEnd };
+const startDate = getMediaStartDate(mediaDate);
+const endDate = getMediaEndDate(mediaDate);
+const formattedStartDate = formatMediaDateLabel({ dateConsumed: startDate });
+const formattedEndDate = formatMediaDateLabel({ dateConsumed: endDate });
+const formattedDate = formatMediaDateLabel(mediaDate);
+const isRange = Boolean(dateConsumedEnd && startDate.getTime() !== endDate.getTime());
 
 const stars = rating ? { filled: rating, empty: 5 - rating } : null;
 const isScreen = type === 'film' || type === 'tv';
@@ -105,9 +110,17 @@ if (yearCreated)               credits.push(['年份', String(yearCreated)]);
             <span class="text-[#dbd8d3] dark:text-[#3d3a35]">{'★'.repeat(stars.empty)}</span>
           </span>
         )}
-        <time class="text-sm text-[#9a9189] dark:text-[#6a6560]" datetime={dateConsumed.toISOString()}>
-          {formattedDate}
-        </time>
+        {isRange ? (
+          <span class="text-sm text-[#9a9189] dark:text-[#6a6560]">
+            <time datetime={startDate.toISOString()}>{formattedStartDate}</time>
+            {' — '}
+            <time datetime={endDate.toISOString()}>{formattedEndDate}</time>
+          </span>
+        ) : (
+          <time class="text-sm text-[#9a9189] dark:text-[#6a6560]" datetime={startDate.toISOString()}>
+            {formattedDate}
+          </time>
+        )}
       </div>
 
       <div class="mt-6 border-t border-[#e8e4de] dark:border-[#2c2925]" style="clear:both"></div>

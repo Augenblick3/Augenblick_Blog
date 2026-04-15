@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { getMediaMonthKey, getMediaSortDate } from '../../utils/mediaDates';
 
 const allMedia = (await getCollection('media', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.dateConsumed.getTime() - a.data.dateConsumed.getTime());
+  .sort((a, b) => getMediaSortDate(b.data).getTime() - getMediaSortDate(a.data).getTime());
 
 const currentYear = new Date().getFullYear();
 
@@ -16,8 +17,7 @@ const books = allMedia.filter((m) => m.data.type === 'book');
 function groupByMonth(items: typeof allMedia) {
   const groups: Record<string, typeof allMedia> = {};
   for (const item of items) {
-    const key = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long' })
-      .format(item.data.dateConsumed);
+    const key = getMediaMonthKey(item.data);
     if (!groups[key]) groups[key] = [];
     groups[key].push(item);
   }
