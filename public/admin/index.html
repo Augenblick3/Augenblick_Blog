@@ -16,6 +16,17 @@
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
     <script>
       (function () {
+        const conditionalFields = {
+          screenwriter: ['film', 'tv'],
+          leadActor: ['film', 'tv'],
+          leadActress: ['film', 'tv'],
+          cast: ['film', 'tv'],
+          translator: ['book'],
+          lyricist: ['music', 'album'],
+          composer: ['music', 'album'],
+          arranger: ['music', 'album'],
+        };
+
         const typeLabels = {
           film: '电影',
           tv: '剧集',
@@ -24,55 +35,22 @@
           book: '书',
         };
 
-        const conditionalFields = {
-          screenwriter: { label: '编剧（影视，可选）', types: ['film', 'tv'] },
-          leadActor: { label: '男主（影视，可选）', types: ['film', 'tv'] },
-          leadActress: { label: '女主（影视，可选）', types: ['film', 'tv'] },
-          cast: { label: '其他演员 / 卡司（影视，可选）', types: ['film', 'tv'] },
-          translator: { label: '译者（书籍，可选）', types: ['book'] },
-          lyricist: { label: '作词（音乐，可选）', types: ['music', 'album'] },
-          composer: { label: '作曲（音乐，可选）', types: ['music', 'album'] },
-          arranger: { label: '编曲（音乐，可选）', types: ['music', 'album'] },
-        };
-
         function normalizeText(value) {
           return (value || '').replace(/\s+/g, ' ').trim();
         }
 
-        function getVisibleText(element) {
-          return normalizeText(element?.textContent || '');
+        function findFieldLabel(fieldName) {
+          return document.querySelector(`label[for^="${fieldName}-field-"]`);
         }
 
-        function findFieldContainerByLabel(labelText) {
-          const target = normalizeText(labelText);
-          const candidates = Array.from(document.querySelectorAll('label, legend, span, div, p, strong'));
-
-          for (const candidate of candidates) {
-            if (getVisibleText(candidate) !== target) continue;
-
-            let current = candidate;
-            while (current && current !== document.body) {
-              if (current.querySelector('input, textarea, select, [role="combobox"], [contenteditable="true"]')) {
-                return current;
-              }
-              current = current.parentElement;
-            }
-          }
-
-          return null;
+        function findFieldContainer(fieldName) {
+          const label = findFieldLabel(fieldName);
+          return label ? label.closest('div[aria-label]') : null;
         }
 
         function getTypeValue() {
-          const directInput =
-            document.querySelector('input[name="type"][value]') ||
-            document.querySelector('select[name="type"]');
-
-          if (directInput && directInput.value && typeLabels[directInput.value]) {
-            return directInput.value;
-          }
-
-          const typeContainer = findFieldContainerByLabel('类型');
-          const typeText = getVisibleText(typeContainer);
+          const typeContainer = findFieldContainer('type');
+          const typeText = normalizeText(typeContainer?.textContent || '');
 
           for (const [value, label] of Object.entries(typeLabels)) {
             if (typeText.includes(label)) return value;
@@ -84,8 +62,8 @@
         function updateConditionalFields() {
           const currentType = getTypeValue();
 
-          Object.values(conditionalFields).forEach(({ label, types }) => {
-            const container = findFieldContainerByLabel(label);
+          Object.entries(conditionalFields).forEach(([fieldName, types]) => {
+            const container = findFieldContainer(fieldName);
             if (!container) return;
 
             const shouldShow = currentType ? types.includes(currentType) : false;
@@ -112,6 +90,10 @@
           });
 
           document.body.addEventListener('click', () => {
+            window.requestAnimationFrame(updateConditionalFields);
+          });
+
+          document.body.addEventListener('input', () => {
             window.requestAnimationFrame(updateConditionalFields);
           });
         }
