@@ -18,24 +18,45 @@ const allMedia = (await getCollection('media', ({ data }) => !data.draft))
   .sort((a, b) => b.data.dateConsumed.getTime() - a.data.dateConsumed.getTime())
   .slice(0, 4);
 
-const currentYear = new Date().getFullYear();
-
 const typeLabel: Record<string, string> = {
   film: '电影', tv: '剧集', music: '音乐', album: '专辑', book: '书',
 };
 const researchTypeLabel: Record<string, string> = {
   'project': '项目', 'paper-note': '读文', 'technical': '技术', 'weekly': '周报',
 };
+
+const latestUpdatedAt = [
+  allMedia[0]?.data.dateConsumed,
+  recentResearch[0]?.data.date,
+  recentMusings[0]?.data.date,
+  recentFitness[0]?.data.date,
+]
+  .filter((date): date is Date => Boolean(date))
+  .sort((a, b) => b.getTime() - a.getTime())[0];
+
+const formattedLatestUpdatedAt = latestUpdatedAt
+  ? new Intl.DateTimeFormat('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(latestUpdatedAt).replaceAll('/', '.')
+  : null;
 ---
 
 <BaseLayout>
   <section class="min-h-[calc(100vh-4rem)] flex flex-col justify-center px-6 py-16">
     <div class="max-w-5xl mx-auto w-full">
 
-      <!-- Subtle header above cards -->
-      <p class="text-xs tracking-[0.25em] text-[#9a9189] dark:text-[#6a6560] mb-8 uppercase">
-        {currentYear} &nbsp;·&nbsp; 瞬息皆永恒
-      </p>
+      <div class="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <p class="font-serif text-lg font-medium text-[#302d29] dark:text-[#c8c2b8]">
+          一些正在发生的记录
+        </p>
+        {formattedLatestUpdatedAt && (
+          <p class="text-[11px] tracking-[0.18em] text-[#9a9189] dark:text-[#6a6560] uppercase">
+            最近更新 · {formattedLatestUpdatedAt}
+          </p>
+        )}
+      </div>
 
       <!-- 4 Module Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
