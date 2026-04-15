@@ -31,7 +31,7 @@ collections:
           - { label: "音乐单曲", value: "music" }
           - { label: "专辑", value: "album" }
           - { label: "书", value: "book" }
-      - { label: "创作者（导演/歌手/作者）", name: "creator", widget: "string", required: false }
+      - { label: "创作者（导演 / 演唱者 / 作者）", name: "creator", widget: "string", required: false }
       - { label: "作品年份", name: "yearCreated", widget: "number", required: false }
       - { label: "观看/阅读/聆听日期", name: "dateConsumed", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false }
       - label: "评分（1–5星）"
@@ -46,8 +46,37 @@ collections:
           - { label: "★☆☆☆☆", value: 1 }
       - { label: "封面图", name: "cover", widget: "image", required: false }
       - { label: "标签", name: "tags", widget: "list", required: false }
+
+      - label: "── 影视专属 ──────────────────"
+        name: "film_divider"
+        widget: "hidden"
+        required: false
+        default: ""
+      - { label: "编剧（影视）", name: "screenwriter", widget: "string", required: false }
+      - label: "主演（影视）"
+        name: "cast"
+        widget: "list"
+        required: false
+        hint: "每行一位，格式建议：演员名（角色名），如 Greta Lee（Nora）"
+
+      - label: "── 书籍专属 ──────────────────"
+        name: "book_divider"
+        widget: "hidden"
+        required: false
+        default: ""
+      - { label: "译者（书籍）", name: "translator", widget: "string", required: false }
+
+      - label: "── 音乐专属 ──────────────────"
+        name: "music_divider"
+        widget: "hidden"
+        required: false
+        default: ""
+      - { label: "作词（音乐）", name: "lyricist", widget: "string", required: false }
+      - { label: "作曲（音乐）", name: "composer", widget: "string", required: false }
+      - { label: "编曲（音乐）", name: "arranger", widget: "string", required: false }
+
       - { label: "草稿", name: "draft", widget: "boolean", default: false }
-      - label: "正文（影评/歌评/读书笔记）"
+      - label: "正文（影评 / 歌评 / 读书笔记）"
         name: "body"
         widget: "markdown"
         hint: "书籍请用 ## 章节名 · 日期 分隔不同时段的感想。引用台词/歌词可用 > 引号块，或在 MDX 中使用 <PullQuote> 组件。"

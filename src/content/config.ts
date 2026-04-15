@@ -6,6 +6,7 @@ const mediaCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     type: z.enum(['film', 'tv', 'music', 'album', 'book']),
+    // Film/TV: 导演 | Music: 演唱者 | Book: 作者
     creator: z.string().optional(),
     yearCreated: z.number().optional(),
     dateConsumed: z.coerce.date(),
@@ -13,8 +14,18 @@ const mediaCollection = defineCollection({
     cover: z.string().optional(),
     tags: z.array(z.string()).optional(),
     draft: z.boolean().default(false),
-    // For books: reading journal entries embedded in the Markdown body
-    // Use headings like "## Chapter 3 · 2026-03-15" to separate reading sessions
+
+    // Film / TV extras
+    screenwriter: z.string().optional(),           // 编剧
+    cast: z.array(z.string()).optional(),           // 主演，格式: ["演员 (角色)", ...]
+
+    // Book extras
+    translator: z.string().optional(),             // 译者
+
+    // Music / Album extras
+    lyricist: z.string().optional(),               // 作词
+    composer: z.string().optional(),               // 作曲
+    arranger: z.string().optional(),               // 编曲
   }),
 });
 

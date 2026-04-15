@@ -13,68 +13,102 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 
-const { title, type, creator, yearCreated, dateConsumed, rating, cover, tags } = entry.data;
+const {
+  title, type, creator, yearCreated, dateConsumed, rating, cover, tags,
+  // Film/TV
+  screenwriter, cast,
+  // Book
+  translator,
+  // Music
+  lyricist, composer, arranger,
+} = entry.data;
 
 const typeLabel: Record<string, string> = {
   film: '电影', tv: '剧集', music: '音乐', album: '专辑', book: '书',
+};
+
+// Role label for the main "creator" field, by type
+const creatorRole: Record<string, string> = {
+  film: '导演', tv: '导演', music: '演唱', album: '演唱', book: '作者',
 };
 
 const formattedDate = new Intl.DateTimeFormat('zh-CN', {
   year: 'numeric', month: 'long', day: 'numeric',
 }).format(dateConsumed);
 
-function renderStars(r?: number) {
-  if (!r) return null;
-  return { filled: r, empty: 5 - r };
-}
-const stars = renderStars(rating);
+const stars = rating ? { filled: rating, empty: 5 - rating } : null;
+
+// Build credits rows: [label, value] — only include filled fields
+type CreditRow = [string, string];
+const credits: CreditRow[] = [];
+
+if (creator)      credits.push([creatorRole[type] ?? '创作者', creator]);
+if (screenwriter) credits.push(['编剧', screenwriter]);
+if (cast?.length) credits.push(['主演', cast.join(' · ')]);
+if (translator)   credits.push(['译者', translator]);
+if (lyricist)     credits.push(['作词', lyricist]);
+if (composer)     credits.push(['作曲', composer]);
+if (arranger)     credits.push(['编曲', arranger]);
+if (yearCreated)  credits.push(['年份', String(yearCreated)]);
 ---
 
 <BaseLayout title={title}>
   <article class="max-w-2xl mx-auto px-6 py-12">
-    <!-- Cover + meta header -->
+
+    <!-- Cover + header -->
     <header class="mb-10">
       {cover && (
-        <div class="mb-8 -mx-6 sm:mx-0">
+        <div class="mb-8 -mx-6 sm:mx-0" style="clear:both">
           <img src={cover} alt={title}
-               class="w-full sm:w-48 sm:float-right sm:ml-8 sm:rounded-xl
-                      sm:shadow-lg object-cover aspect-[2/3] sm:aspect-auto sm:h-72" />
+               class="w-full sm:w-44 sm:float-right sm:ml-8 sm:rounded-xl
+                      sm:shadow-md object-cover aspect-[2/3] sm:aspect-auto sm:h-64" />
         </div>
       )}
 
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-xs px-2 py-0.5 rounded bg-gray-100 dark:bg-[#1f1f1f]
-                     text-gray-600 dark:text-gray-400 font-medium">
+      <!-- Type badge + tags -->
+      <div class="flex items-center gap-2 mb-3 flex-wrap">
+        <span class="text-xs px-2 py-0.5 rounded
+                     bg-[#edeae4] dark:bg-[#2c2925]
+                     text-[#7a7670] dark:text-[#7a7670] font-medium">
           {typeLabel[type]}
         </span>
         {tags?.map((tag) => <span class="tag-pill">{tag}</span>)}
       </div>
 
-      <h1 class="font-serif text-3xl font-medium text-gray-900 dark:text-gray-100 leading-snug mb-2">
+      <!-- Title -->
+      <h1 class="font-serif text-3xl font-medium text-[#302d29] dark:text-[#c8c2b8] leading-snug mb-4">
         {title}
       </h1>
 
-      {creator && (
-        <p class="text-gray-500 dark:text-gray-400 mb-1">
-          {creator}{yearCreated ? ` · ${yearCreated}` : ''}
-        </p>
+      <!-- Credits table -->
+      {credits.length > 0 && (
+        <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 mb-4 text-sm">
+          {credits.map(([label, value]) => (
+            <>
+              <dt class="text-[#9a9189] dark:text-[#6a6560] whitespace-nowrap">{label}</dt>
+              <dd class="text-[#4a4540] dark:text-[#a8a29a]">{value}</dd>
+            </>
+          ))}
+        </dl>
       )}
 
-      <div class="flex items-center gap-4 mt-3">
+      <!-- Stars + date -->
+      <div class="flex items-center gap-4 mt-4">
         {stars && (
-          <span class="text-base" aria-label={`${rating} 星`}>
-            {'★'.repeat(stars.filled)}<span class="text-gray-300 dark:text-gray-600">{'★'.repeat(stars.empty)}</span>
+          <span class="text-base tracking-tight" aria-label={`${rating} 星`}>
+            <span class="text-amber-400">{'★'.repeat(stars.filled)}</span>
+            <span class="text-[#dbd8d3] dark:text-[#3d3a35]">{'★'.repeat(stars.empty)}</span>
           </span>
         )}
-        <time class="text-sm text-gray-400 dark:text-gray-500" datetime={dateConsumed.toISOString()}>
+        <time class="text-sm text-[#9a9189] dark:text-[#6a6560]" datetime={dateConsumed.toISOString()}>
           {formattedDate}
         </time>
       </div>
 
-      <div class="mt-6 border-t border-gray-100 dark:border-[#1f1f1f]" style="clear:both"></div>
+      <div class="mt-6 border-t border-[#e8e4de] dark:border-[#2c2925]" style="clear:both"></div>
     </header>
 
-    <!-- Post content (reviews, notes, lyrics, screenshots) -->
+    <!-- Body content -->
     <div class="prose prose-gray dark:prose-invert max-w-none
                 prose-headings:font-serif prose-headings:font-medium
                 prose-a:text-indigo-600 dark:prose-a:text-indigo-400
@@ -83,9 +117,10 @@ const stars = renderStars(rating);
       <Content />
     </div>
 
-    <footer class="mt-16 pt-8 section-divider">
+    <footer class="mt-16 pt-8 border-t border-[#e8e4de] dark:border-[#2c2925]">
       <a href="/media"
-         class="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+         class="text-sm text-[#9a9189] dark:text-[#6a6560]
+                hover:text-[#302d29] dark:hover:text-[#c8c2b8] transition-colors">
         ← 返回媒介
       </a>
     </footer>
