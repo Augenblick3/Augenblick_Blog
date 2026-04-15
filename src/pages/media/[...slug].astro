@@ -16,7 +16,7 @@ const { Content } = await entry.render();
 const {
   title, type, creator, yearCreated, dateConsumed, rating, cover, tags,
   // Film/TV
-  screenwriter, cast,
+  screenwriter, leadActor, leadActress, cast,
   // Book
   translator,
   // Music
@@ -37,19 +37,24 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
 }).format(dateConsumed);
 
 const stars = rating ? { filled: rating, empty: 5 - rating } : null;
+const isScreen = type === 'film' || type === 'tv';
+const isBook = type === 'book';
+const isMusic = type === 'music' || type === 'album';
 
 // Build credits rows: [label, value] — only include filled fields
 type CreditRow = [string, string];
 const credits: CreditRow[] = [];
 
-if (creator)      credits.push([creatorRole[type] ?? '创作者', creator]);
-if (screenwriter) credits.push(['编剧', screenwriter]);
-if (cast?.length) credits.push(['主演', cast.join(' · ')]);
-if (translator)   credits.push(['译者', translator]);
-if (lyricist)     credits.push(['作词', lyricist]);
-if (composer)     credits.push(['作曲', composer]);
-if (arranger)     credits.push(['编曲', arranger]);
-if (yearCreated)  credits.push(['年份', String(yearCreated)]);
+if (creator)                   credits.push([creatorRole[type] ?? '创作者', creator]);
+if (isScreen && screenwriter)  credits.push(['编剧', screenwriter]);
+if (isScreen && leadActor)     credits.push(['男主', leadActor]);
+if (isScreen && leadActress)   credits.push(['女主', leadActress]);
+if (isScreen && cast?.length)  credits.push(['其他演员', cast.join(' · ')]);
+if (isBook && translator)      credits.push(['译者', translator]);
+if (isMusic && lyricist)       credits.push(['作词', lyricist]);
+if (isMusic && composer)       credits.push(['作曲', composer]);
+if (isMusic && arranger)       credits.push(['编曲', arranger]);
+if (yearCreated)               credits.push(['年份', String(yearCreated)]);
 ---
 
 <BaseLayout title={title}>

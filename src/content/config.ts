@@ -17,6 +17,8 @@ const mediaCollection = defineCollection({
 
     // Film / TV extras
     screenwriter: z.string().optional(),           // 编剧
+    leadActor: z.string().optional(),              // 男主
+    leadActress: z.string().optional(),            // 女主
     cast: z.array(z.string()).optional(),           // 主演，格式: ["演员 (角色)", ...]
 
     // Book extras
