@@ -1,5 +1,5 @@
 type MediaDateShape = {
-  dateConsumed: Date;
+  dateConsumed?: Date;
   dateConsumedEnd?: Date;
 };
 
@@ -12,11 +12,11 @@ function formatDate(date: Date, locale = 'zh-CN') {
 }
 
 export function getMediaStartDate(data: MediaDateShape) {
-  return data.dateConsumed;
+  return data.dateConsumed ?? data.dateConsumedEnd!;
 }
 
 export function getMediaEndDate(data: MediaDateShape) {
-  return data.dateConsumedEnd ?? data.dateConsumed;
+  return data.dateConsumedEnd ?? data.dateConsumed!;
 }
 
 export function getMediaSortDate(data: MediaDateShape) {
@@ -32,7 +32,7 @@ export function getMediaMonthKey(data: MediaDateShape, locale = 'zh-CN') {
 
 export function formatMediaDateLabel(data: MediaDateShape, locale = 'zh-CN') {
   const start = getMediaStartDate(data);
-  const end = data.dateConsumedEnd;
+  const end = data.dateConsumedEnd ?? data.dateConsumed;
 
   if (!end || start.getTime() === end.getTime()) {
     return formatDate(start, locale);

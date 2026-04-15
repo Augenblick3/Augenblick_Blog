@@ -33,19 +33,20 @@ collections:
           - { label: "书", value: "book" }
       - { label: "主要创作者（导演 / 演唱者 / 作者）", name: "creator", widget: "string", required: false }
       - { label: "作品年份", name: "yearCreated", widget: "number", required: false }
-      - label: "开始日期 / 单日日期"
+      - label: "开始日期（可选）"
         name: "dateConsumed"
         widget: "datetime"
         date_format: "YYYY-MM-DD"
         time_format: false
-        hint: "如果只在某一天看完/读完/听完，只填这一项。"
-      - label: "结束日期（可选）"
+        required: false
+        hint: "如果这是一个持续一段时间的过程，可以自由填写开始日期。"
+      - label: "结束日期 / 单日日期"
         name: "dateConsumedEnd"
         widget: "datetime"
         date_format: "YYYY-MM-DD"
         time_format: false
         required: false
-        hint: "如果这是一个持续一段时间的过程，再填写结束日期。"
+        hint: "如果只想记录某一天，只填这一项即可。"
       - label: "评分（1–5星）"
         name: "rating"
         widget: "select"

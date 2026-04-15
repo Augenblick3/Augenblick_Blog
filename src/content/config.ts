@@ -9,7 +9,7 @@ const mediaCollection = defineCollection({
     // Film/TV: 导演 | Music: 演唱者 | Book: 作者
     creator: z.string().optional(),
     yearCreated: z.number().optional(),
-    dateConsumed: z.coerce.date(),
+    dateConsumed: z.coerce.date().optional(),
     dateConsumedEnd: z.coerce.date().optional(),
     rating: z.number().min(1).max(5).optional(),
     cover: z.string().optional(),
@@ -29,13 +29,21 @@ const mediaCollection = defineCollection({
     lyricist: z.string().optional(),               // 作词
     composer: z.string().optional(),               // 作曲
     arranger: z.string().optional(),               // 编曲
-  }).refine(
-    (data) => !data.dateConsumedEnd || data.dateConsumedEnd >= data.dateConsumed,
-    {
-      message: '结束日期不能早于开始日期',
-      path: ['dateConsumedEnd'],
-    },
-  ),
+  })
+    .refine(
+      (data) => Boolean(data.dateConsumed || data.dateConsumedEnd),
+      {
+        message: '请至少填写一个日期',
+        path: ['dateConsumedEnd'],
+      },
+    )
+    .refine(
+      (data) => !data.dateConsumed || !data.dateConsumedEnd || data.dateConsumedEnd >= data.dateConsumed,
+      {
+        message: '结束日期不能早于开始日期',
+        path: ['dateConsumedEnd'],
+      },
+    ),
 });
 
 // Research posts: project updates, paper notes, tech posts, weekly reports
