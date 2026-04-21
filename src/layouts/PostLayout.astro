@@ -39,9 +39,11 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
     </header>
 
     <div class="prose prose-gray dark:prose-invert max-w-none
-                prose-headings:font-serif prose-headings:font-medium
+                prose-base prose-headings:font-serif prose-headings:font-medium
                 prose-a:text-indigo-600 dark:prose-a:text-indigo-400
-                prose-code:text-sm prose-pre:bg-transparent prose-pre:p-0">
+                prose-code:text-sm prose-pre:bg-transparent prose-pre:p-0
+                prose-p:leading-[1.9] prose-p:text-[1.0625rem]
+                prose-li:leading-[1.9] prose-li:text-[1.0625rem]">
       <slot />
     </div>
 

@@ -70,6 +70,7 @@ if (yearCreated)               credits.push(['年份', String(yearCreated)]);
       {cover && (
         <div class="mb-8 -mx-6 sm:mx-0" style="clear:both">
           <img src={cover} alt={title}
+               loading="lazy"
                class="w-full sm:w-44 sm:float-right sm:ml-8 sm:rounded-xl
                       sm:shadow-md object-cover aspect-[2/3] sm:aspect-auto sm:h-64" />
         </div>

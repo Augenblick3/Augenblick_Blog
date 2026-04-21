@@ -102,6 +102,7 @@ function renderStars(rating?: number) {
                             transition-all duration-200">
                     {item.data.cover ? (
                       <img src={item.data.cover} alt={item.data.title}
+                           loading="lazy"
                            class="w-12 h-12 object-cover rounded-md flex-shrink-0" />
                     ) : (
                       <div class="w-12 h-12 rounded-md flex-shrink-0 bg-gray-100 dark:bg-[#1f1f1f]

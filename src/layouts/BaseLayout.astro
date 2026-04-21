@@ -13,6 +13,7 @@ const navLinks = [
   { href: '/musings',  label: '隨想' },
   { href: '/fitness',  label: '健身' },
 ];
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -64,9 +65,15 @@ const navLinks = [
 
         <!-- Desktop links + dark toggle -->
         <div class="hidden md:flex items-center gap-6">
-          {navLinks.map(({ href, label }) => (
-            <a href={href} class="nav-link">{label}</a>
-          ))}
+          {navLinks.map(({ href, label }) => {
+            const isActive = currentPath.startsWith(href);
+            return (
+              <a href={href}
+                 class={`nav-link ${isActive ? 'text-[#302d29] dark:text-[#c8c2b8] underline underline-offset-4 decoration-[#c8c4be] dark:decoration-[#4a4640]' : ''}`}>
+                {label}
+              </a>
+            );
+          })}
           <button id="theme-toggle-desktop" aria-label="切換深淺色"
                   class="p-1.5 rounded-md text-[#9a9189] dark:text-[#6a6560]
                          hover:text-[#302d29] dark:hover:text-[#c8c2b8]
