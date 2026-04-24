@@ -51,6 +51,37 @@
            bg-gray-100 dark:bg-[#1f1f1f]
            text-gray-500 dark:text-gray-400;
   }
+
+  .card-paper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-paper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 300px 300px;
+    mix-blend-mode: overlay;
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+
+  .card-paper:hover::before {
+    opacity: 0.08;
+  }
+
+  .card-paper:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(80, 60, 40, 0.10);
+  }
+
+  .dark .card-paper:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.30);
+  }
 }
 
 /* KaTeX display math */
