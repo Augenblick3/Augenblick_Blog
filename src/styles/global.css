@@ -72,16 +72,16 @@
   }
 
   .card-paper:hover::before {
-    opacity: 0.08;
+    opacity: 0.18;
   }
 
   .card-paper:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(80, 60, 40, 0.10);
+    transform: translateY(-12px);
+    box-shadow: 0 24px 48px rgba(80, 60, 40, 0.22);
   }
 
   .dark .card-paper:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.30);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55);
   }
 }
 
