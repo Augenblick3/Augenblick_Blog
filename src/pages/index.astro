@@ -3,10 +3,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { getMediaSortDate } from '../utils/mediaDates';
 
-const recentFitness = (await getCollection('fitness', ({ data }) => !data.draft && !data.isRestDay))
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 4);
-
 const recentResearch = (await getCollection('research', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3);
@@ -30,7 +26,6 @@ const latestUpdatedAt = [
   allMedia[0] ? getMediaSortDate(allMedia[0].data) : null,
   recentResearch[0]?.data.date,
   recentMusings[0]?.data.date,
-  recentFitness[0]?.data.date,
 ]
   .filter((date): date is Date => Boolean(date))
   .sort((a, b) => b.getTime() - a.getTime())[0];
@@ -59,8 +54,8 @@ const formattedLatestUpdatedAt = latestUpdatedAt
         )}
       </div>
 
-      <!-- 4 Module Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- 3 Module Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
         <!-- Media Card -->
         <a href="/media"
@@ -141,37 +136,6 @@ const formattedLatestUpdatedAt = latestUpdatedAt
               {recentMusings.map((post) => (
                 <li class="text-xs text-[#9a9189] dark:text-[#6a6560] truncate">
                   {post.data.title}
-                </li>
-              ))}
-            </ul>
-          )}
-          <span class="absolute bottom-5 right-5 text-[#c8c4be] dark:text-[#3d3a35]
-                       group-hover:text-[#9a9189] dark:group-hover:text-[#6a6560] transition-colors text-sm">→</span>
-        </a>
-
-        <!-- Fitness Card -->
-        <a href="/fitness"
-           class="group relative card-paper flex flex-col p-7 rounded-2xl
-                  border border-[#dbd8d3] dark:border-[#2c2925]
-                  bg-[#faf8f4] dark:bg-[#222019]
-                  hover:border-[#c8c4be] dark:hover:border-[#3d3a35]
-                  transition-all duration-200">
-          <span class="text-xl mb-5 opacity-60">◈</span>
-          <h2 class="font-serif text-lg font-medium text-[#302d29] dark:text-[#c8c2b8] mb-1.5">
-            健身
-          </h2>
-          <p class="text-xs text-[#9a9189] dark:text-[#6a6560] leading-relaxed mb-5">
-            每日运动记录
-          </p>
-          {recentFitness.length > 0 && (
-            <ul class="space-y-2 border-t border-[#e8e4de] dark:border-[#2c2925] pt-4 mt-auto">
-              {recentFitness.map((log) => (
-                <li class="flex items-center gap-2 text-xs text-[#9a9189] dark:text-[#6a6560]">
-                  <span class="tabular-nums shrink-0">
-                    {new Intl.DateTimeFormat('zh-CN', { month: '2-digit', day: '2-digit' })
-                      .format(log.data.date)}
-                  </span>
-                  <span class="truncate">{log.data.summary ?? '训练日志'}</span>
                 </li>
               ))}
             </ul>

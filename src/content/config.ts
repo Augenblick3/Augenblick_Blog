@@ -69,22 +69,8 @@ const musingsCollection = defineCollection({
   }),
 });
 
-// Fitness log: one entry per day
-const fitnessCollection = defineCollection({
-  type: 'content',
-  schema: z.object({
-    date: z.coerce.date(),
-    isRestDay: z.boolean().default(false),
-    summary: z.string().optional(),
-    totalMinutes: z.number().optional(),
-    mood: z.enum(['great', 'good', 'okay', 'tired']).optional(),
-    draft: z.boolean().default(false),
-  }),
-});
-
 export const collections = {
   media: mediaCollection,
   research: researchCollection,
   musings: musingsCollection,
-  fitness: fitnessCollection,
 };
